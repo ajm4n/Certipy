@@ -42,7 +42,7 @@ def add_subparser(subparsers: argparse._SubParsersAction) -> Tuple[str, Callable
         type=int,
     )
     group.add_argument(
-        "--application-policies",
+        "--app-policies",
         action="store",
         metavar="Application Policy",
         default="Client Authentication",
