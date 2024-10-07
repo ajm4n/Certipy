@@ -556,6 +556,9 @@ class Request:
         self.renew = renew
         self.out = out
         self.key = key
+        self.application_policies = [
+            OID_TO_STR_MAP.get(policy, policy) for policy in (application_policies or [])
+        ]
 
         self.web = web
         self.port = port
@@ -667,6 +670,12 @@ class Request:
             with open(self.pfx, "rb") as f:
                 renewal_key, renewal_cert = load_pfx(f.read())
 
+        converted_policies = []
+        for policy in self.application_policies:
+            oid = next((k for k, v in OID_TO_STR_MAP.items() if v.lower() == policy.lower()), policy)
+            converted_policies.append(oid)
+        self.application_policies = converted_policies        
+
         csr, key = create_csr(
             username,
             alt_dns=self.alt_dns,
@@ -676,6 +685,7 @@ class Request:
             key_size=self.key_size,
             subject=self.subject,
             renewal_cert=renewal_cert,
+            application_policies=self.application_policies
         )
         self.key = key
 
@@ -714,6 +724,10 @@ class Request:
                 san.append("upn=%s" % self.alt_upn)
 
             attributes.append("SAN:%s" % "&".join(san))
+        
+        if self.application_policies:
+            policy_string = "&".join(self.application_policies)
+            attributes.append(f"ApplicationPolicies:{policy_string}")
 
         cert = self.interface.request(csr, attributes)
 
