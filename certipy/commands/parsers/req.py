@@ -76,9 +76,9 @@ def add_subparser(subparsers: argparse._SubParsersAction) -> Tuple[str, Callable
         action="store",
         nargs='+',
         metavar="Application Policy",
-        help="Specify application policies for the certificate request using OIDs (e.g., '1.3.6.1.4.1.311.10.3.4' or 'Client Authentication')"
+        help="Specify application policies for the certificate request using OIDs (e.g., '1.3.6.1.4.1.311.10.3.4' or 'Client Authentication')",
     )
-    
+
     group = subparser.add_argument_group("output options")
     group.add_argument("-out", action="store", metavar="output file name")
 
